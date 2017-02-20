@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+def test
+  suits = [Random.rand(4), Random.rand(4), Random.rand(4), Random.rand(4)]
+  offsets = [0, 1, 2, 3]
+
+  guesses = []
+  offsets.each do |offset|
+    other_suits = suits.slice(offset, 1)
+    guess = 0
+    other_suits.each { |suit| guess = guess + suit }
+    guess = (guess + offset) % 4
+    guesses[offset] = guess
+  end
+
+  success = 0
+
+  for i in 0...3
+    if suits[i] == guesses[i]
+      success = success + 1
+    end
+  end
+
+  if success > 1
+    puts suits.join(",")
+    puts guesses.join(",")
+    puts "--------------"
+  end
+end
+
+for i in 0...1000000
+  test
+end

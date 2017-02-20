@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'chronic'
+puts Chronic.parse ARGV.join(' ')

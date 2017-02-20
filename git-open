@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+status_output = `git status --porcelain`.split("\n")
+files = []
+status_output.each do | status_line |
+  file = {}
+  file[:status] = status_line.split(" ").first
+  file[:name] = status_line.split(" ").last
+  files.push(file)
+end
+
+valid_status_types = ARGV[0].split("")
+files.keep_if do | file |
+  valid_status_types.include? file[:status]
+end
+
+file_names = files.map { |file| file[:name] }
+file_name_string = file_names.join(' ')
+`open -b com.jetbrains.intellij #{file_name_string}`

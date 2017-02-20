@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+ls_output = `git ls-files -u`.split("\n")
+file_names = []
+ls_output.each do | ls_line |
+  file_name = ls_line.split(" ").last
+  file_names.push(file_name)
+end
+
+file_names.uniq!
+file_name_string = file_names.join(' ')
+`open -b com.jetbrains.intellij #{file_name_string}`

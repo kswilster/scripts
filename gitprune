@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+require 'chronic'
+require 'colorize'
+require 'git'
+require 'highline/import'
+
+def extract_branch_info(branch_name)
+  branch_string = `git log -n1 #{branch_name} --pretty=format:"%cr | %ct | %an"`
+  time_ago, timestamp, comitter = branch_string.split('|')
+  return { 'time_ago': time_ago, 'timestamp': timestamp.to_i, 'comitter': comitter }
+end
+
+git = Git.init
+
+cutoff_time_ago = ARGV.join(' ')
+cutoff_date = Chronic.parse(cutoff_time_ago).to_i
+answer = ask "Remove all branches that haven't been touched since #{cutoff_time_ago}? (y/n)"
+
+if answer.include? 'y'
+  branch_names = `git for-each-ref --sort=-committerdate --format="%(refname:short)" refs/heads`.split("\n")
+
+  puts "Removing Branches...".red
+
+  branch_names.each do |branch_name|
+    branch_info = extract_branch_info(branch_name)
+    if (branch_info[:timestamp] < cutoff_date)
+      print "%-20s %-35s %-40s\n" % [branch_info[:time_ago].green, branch_info[:comitter].cyan, branch_name.yellow]
+      `git branch -D #{branch_name}`
+    end
+  end
+end

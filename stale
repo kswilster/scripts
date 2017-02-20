@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'chronic'
+require 'jekyll-timeago'
+require 'colorize'
+
+branches = `git for-each-ref --sort=-committerdate --format="%(refname:short)    %(authordate:relative)    %(authorname)" refs/heads`.split("\n")
+output = ""
+
+branches.each do | branch |
+  # print branch
+  refname, authordate, authorname = branch.split('    ')
+  output += "%-30s %-35s %-70s\n" % [authordate.green, authorname.cyan, refname.yellow]
+end
+
+IO.popen("less -r", "w") { |f| f.puts output }

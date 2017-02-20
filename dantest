@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+term_height = `tput lines`
+pages = []
+filepath = ARGV[0].to_i
+File.open(filepath, "r") do |file|
+  index = 0
+  page = ""
+  file.each_line do |line|
+    page << line
+    index += 1
+    if index > term_height
+      index = 0
+      pages << page
+      page = ""
+    end
+  end
+end
